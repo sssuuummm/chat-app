@@ -521,14 +521,8 @@ function getSettingsFromStorage() {
 }
 
 function loadSettingsFromStorage() {
-    const s = getSettingsFromStorage();
-    if (Object.keys(s).length > 0) {
-        fetch("/api/config", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(s),
-        }).catch(() => {});
-    }
+    // No longer auto-push to server — would overwrite .env / Render env vars.
+    // Settings are only applied when user explicitly saves from the settings modal.
 }
 
 // ── Persistence ──────────────────────────────────────────────────────────────
