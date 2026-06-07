@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: chat-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DEEPSEEK_MODEL
+        sync: false
+      - key: DEEPSEEK_THINKING
+        sync: false
+      - key: DEEPSEEK_REASONING_EFFORT
+        sync: false
+      - key: VISION_PROVIDER
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DOUBAO_API_KEY
+        sync: false
+      - key: DOUBAO_BASE_URL
+        sync: false
+      - key: DOUBAO_VISION_MODEL
+        sync: false

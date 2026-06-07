@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ════════════════ Top Bar ════════════════ -->
+<header id="top-bar">
+    <span class="top-bar-title">💬 聊天</span>
+    <div class="top-bar-actions">
+        <button id="btn-history" class="btn-icon" title="历史记录">📋</button>
+        <button id="btn-settings" class="btn-icon" title="设置">⚙</button>
+    </div>
+</header>
+
+<!-- ════════════════ Main Chat Area ════════════════ -->
+<main id="chat-area">
+    <!-- Empty state -->
+    <div id="empty-state" class="empty-state">
+        <div class="empty-icon">💬</div>
+        <h2>开始对话</h2>
+        <p>在下方输入消息，开始和 DeepSeek 聊天</p>
+    </div>
+
+    <!-- Messages container -->
+    <div id="messages-container" class="messages-container" style="display:none;">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Input area -->
+    <div id="input-area" class="input-area">
+        <!-- Image preview -->
+        <div id="image-preview-bar" class="image-preview-bar" style="display:none;">
+            <img id="image-preview-thumb" src="" alt="preview">
+            <span class="file-name"></span>
+            <button id="btn-remove-image" class="btn-remove-image" title="移除图片">✕</button>
+        </div>
+
+        <div class="input-row">
+            <button id="btn-attach-image" class="btn-attach" title="添加图片">🖼</button>
+            <input type="file" id="file-input" accept="image/*" style="display:none;">
+            <textarea id="message-input" rows="1" placeholder="输入消息..." autocomplete="off"></textarea>
+            <button id="btn-send" class="btn-send" title="发送">发送</button>
+        </div>
+    </div>
+</main>
+
+<!-- ════════════════ History Modal ════════════════ -->
+<div id="history-modal" class="modal" style="display:none;">
+    <div class="modal-content modal-history">
+        <h3>📋 历史记录</h3>
+
+        <div class="history-toolbar">
+            <button id="btn-new-chat" class="btn-primary btn-sm">+ 新建对话</button>
+            <input type="text" id="history-search" placeholder="搜索历史..." autocomplete="off">
+        </div>
+
+        <div id="history-list" class="history-list">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="modal-actions">
+            <button id="btn-close-history" class="btn-secondary">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ Settings Modal ════════════════ -->
+<div id="settings-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>⚙ 设置</h3>
+
+        <label>DeepSeek API Key</label>
+        <input type="password" id="setting-deepseek-key" placeholder="sk-...">
+
+        <label>DeepSeek Model</label>
+        <input type="text" id="setting-deepseek-model" placeholder="deepseek-chat">
+
+        <label>视觉识别 Provider</label>
+        <select id="setting-vision-provider">
+            <option value="none">不使用（纯文本）</option>
+            <option value="openai">OpenAI GPT-4o</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="doubao">豆包 Doubao（火山引擎）</option>
+        </select>
+
+        <label>OpenAI API Key</label>
+        <input type="password" id="setting-openai-key" placeholder="sk-...">
+
+        <label>Gemini API Key</label>
+        <input type="password" id="setting-gemini-key" placeholder="AIza...">
+
+        <label>豆包 API Key（火山引擎）</label>
+        <input type="password" id="setting-doubao-key" placeholder="...">
+
+        <label>豆包 Vision Model</label>
+        <input type="text" id="setting-doubao-model" placeholder="doubao-vision-pro-32k">
+
+        <div class="modal-actions">
+            <button id="btn-save-settings" class="btn-primary">保存设置</button>
+            <button id="btn-close-settings" class="btn-secondary">取消</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
