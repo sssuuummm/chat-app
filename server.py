@@ -167,15 +167,20 @@ class VisionAgent:
             ],
             "max_tokens": 1000,
         }
-        resp = requests.post(
-            f"{DOUBAO_BASE_URL}/chat/completions",
-            headers={"Authorization": f"Bearer {DOUBAO_API_KEY}", "Content-Type": "application/json"},
-            json=body,
-            timeout=120,
-        )
-        if resp.status_code != 200:
-            return f"[Doubao vision error: {resp.status_code} {resp.text[:300]}]"
-        return resp.json()["choices"][0]["message"]["content"]
+        try:
+            resp = requests.post(
+                f"{DOUBAO_BASE_URL}/chat/completions",
+                headers={"Authorization": f"Bearer {DOUBAO_API_KEY}", "Content-Type": "application/json"},
+                json=body,
+                timeout=150,
+            )
+            if resp.status_code != 200:
+                return f"[Doubao vision error: {resp.status_code} {resp.text[:300]}]"
+            return resp.json()["choices"][0]["message"]["content"]
+        except requests.exceptions.Timeout:
+            return "[Doubao vision error: request timed out after 150s]"
+        except requests.exceptions.ConnectionError as e:
+            return f"[Doubao vision error: connection failed — {e}]"
 
 
 # ── DeepSeek API helper ──────────────────────────────────────────────────────
@@ -242,7 +247,19 @@ def orchestrate(user_text: str, image_b64: Optional[str] = None, image_mime: Opt
         )
 
         # ── Step 2: Vision agent answers ──
-        vision_result = VisionAgent.describe(image_b64, image_mime, guidance.strip())
+        try:
+            vision_result = VisionAgent.describe(image_b64, image_mime, guidance.strip())
+        except Exception as e:
+            vision_result = f"[Vision agent call failed: {e}]"
+
+        # If vision failed, tell DeepSeek the vision agent is unavailable
+        if vision_result.startswith("[Doubao vision error") or vision_result.startswith("[Vision agent call failed"):
+            fallback_hint = (
+                f"{user_text}\n\n[系统提示：用户附带了一张图片，但视觉识别服务暂时不可用"
+                f"（{vision_result}）。请在回复中礼貌告知用户视觉识别暂时不可用，"
+                "建议稍后重试或改为文字描述，然后正常回答用户的其他问题。]"
+            )
+            return _chat_with_history(fallback_hint)
 
         # ── Step 3: DeepSeek produces final response ──
         final_prompt = (
